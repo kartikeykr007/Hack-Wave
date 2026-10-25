@@ -5,16 +5,36 @@ import { buildHackathonPrompt } from "@/lib/prompts";
 
 
 function extractJSON(text: string): string {
-  // Try to find a JSON object in the text
-  const jsonMatch = text.match(/\{[\s\S]*\}/);
-  if (jsonMatch) return jsonMatch[0];
-  return text.trim();
+  // Strip code fences if present
+  let cleaned = text.trim();
+  cleaned = cleaned.replace(/^```(?:json)?\s*\n?/i, "").replace(/\n?```\s*$/i, "").trim();
+
+  // Find outermost curly braces
+  const firstBrace = cleaned.indexOf("{");
+  const lastBrace = cleaned.lastIndexOf("}");
+  if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+    return cleaned.slice(firstBrace, lastBrace + 1);
+  }
+  return cleaned;
+}
+
+function parseModelJson(rawText: string): unknown {
+  const jsonStr = extractJSON(rawText);
+  try {
+    return JSON.parse(jsonStr);
+  } catch {
+    // Attempt fallback sanitization for trailing commas
+    const sanitized = jsonStr
+      .replace(/,\s*([}\]])/g, "$1")
+      .replace(/[\u0000-\u001F]+/g, (match) => (match === "\n" || match === "\r" || match === "\t" ? match : ""));
+    return JSON.parse(sanitized);
+  }
 }
 
 export async function POST(req: NextRequest): Promise<NextResponse<GenerateResponse | GenerateError>> {
   // ── Validate env ──────────────────────────────────────────────────────────
   const apiKey = process.env.GEMINI_API_KEY;
-  const modelName = process.env.GEMMA_MODEL || "gemma-3-27b-it";
+  const modelName = process.env.GEMMA_MODEL || "gemma-4-26b-a4b-it";
 
   if (!apiKey) {
     return NextResponse.json(
@@ -77,8 +97,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<GenerateRespo
     // ── Parse JSON ────────────────────────────────────────────────────────
     let parsed: unknown;
     try {
-      const jsonStr = extractJSON(rawText);
-      parsed = JSON.parse(jsonStr);
+      parsed = parseModelJson(rawText);
     } catch {
       console.error("Failed to parse model JSON:", rawText.slice(0, 500));
       return NextResponse.json(

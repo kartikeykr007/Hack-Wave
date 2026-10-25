@@ -51,8 +51,14 @@ export default function MermaidDiagram({ source }: MermaidDiagramProps) {
 
         if (cancelled) return;
 
+        // Clean source of markdown fences or outer backticks
+        const cleanSource = source
+          .replace(/^```(?:mermaid)?\s*\n?/i, "")
+          .replace(/\n?```\s*$/i, "")
+          .trim();
+
         const id = `mermaid-${Date.now()}`;
-        const { svg } = await mermaid.render(id, source);
+        const { svg } = await mermaid.render(id, cleanSource);
 
         if (!cancelled && containerRef.current) {
           containerRef.current.innerHTML = svg;

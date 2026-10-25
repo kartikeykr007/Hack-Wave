@@ -1,13 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   Layers, Database, GitBranch, CheckSquare, AlertTriangle,
-  Play, Mic, Star, Clock, Users, Zap, ChevronRight, Server, Globe, Save, RotateCcw
+  Play, Mic, Star, Clock, Users, Zap, ChevronRight, Server, Globe, Save, RotateCcw,
+  Download, FileText
 } from "lucide-react";
 import { ProjectPlan, IdeaRequest } from "@/lib/types";
 import CopyButton from "./CopyButton";
 import MermaidDiagram from "./MermaidDiagram";
+import { generateMarkdownReport, downloadMarkdown } from "@/lib/exportMarkdown";
 
 const TABS = [
   { id: "overview", label: "Overview", icon: <Star size={14} /> },
@@ -66,7 +68,13 @@ export default function ResultsDashboard({
   const [activeTab, setActiveTab] = useState<TabId>("overview");
 
   const fullPlanText = JSON.stringify(plan, null, 2);
+  const markdownReport = useMemo(() => generateMarkdownReport(plan, request), [plan, request]);
   const generatedDate = new Date(generatedAt).toLocaleString();
+
+  const handleDownloadMarkdown = () => {
+    const safeTitle = plan.projectTitle.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+    downloadMarkdown(`${safeTitle}-blueprint.md`, markdownReport);
+  };
 
   return (
     <div className="max-w-5xl mx-auto px-4 pb-20 animate-fade-in-up">
@@ -104,6 +112,16 @@ export default function ResultsDashboard({
           </p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
+          <CopyButton text={markdownReport} label="Copy Markdown" />
+          <button
+            id="download-markdown-button"
+            onClick={handleDownloadMarkdown}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-purple-500/10 border border-purple-500/25 text-purple-300 hover:text-white hover:bg-purple-500/20 transition-all duration-200"
+            title="Download formatted project plan as .md file"
+          >
+            <Download size={12} />
+            Export .md
+          </button>
           <CopyButton text={fullPlanText} label="Copy JSON" />
           <button
             id="save-plan-button"
