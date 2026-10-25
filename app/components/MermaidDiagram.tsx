@@ -23,6 +23,7 @@ export default function MermaidDiagram({ source }: MermaidDiagramProps) {
         const mermaid = (await import("mermaid")).default;
         mermaid.initialize({
           startOnLoad: false,
+          suppressErrorRendering: true,
           theme: "dark",
           themeVariables: {
             primaryColor: "#6366f1",
@@ -52,10 +53,15 @@ export default function MermaidDiagram({ source }: MermaidDiagramProps) {
         if (cancelled) return;
 
         // Clean source of markdown fences or outer backticks
-        const cleanSource = source
+        let cleanSource = source
           .replace(/^```(?:mermaid)?\s*\n?/i, "")
           .replace(/\n?```\s*$/i, "")
           .trim();
+
+        // Ensure valid diagram type header
+        if (!/^(graph|flowchart|sequenceDiagram|classDiagram|stateDiagram|erDiagram|journey|gantt|pie|gitGraph)/i.test(cleanSource)) {
+          cleanSource = `graph TD\n${cleanSource}`;
+        }
 
         const id = `mermaid-${Date.now()}`;
         const { svg } = await mermaid.render(id, cleanSource);
@@ -76,7 +82,9 @@ export default function MermaidDiagram({ source }: MermaidDiagramProps) {
       } catch (err) {
         if (!cancelled) {
           console.error("Mermaid render error:", err);
-          setError("Could not render diagram. Showing source instead.");
+          // Clean up any stray error elements injected by mermaid into body
+          document.querySelectorAll("[id^='dmermaid']").forEach((el) => el.remove());
+          setError("Diagram syntax cannot be rendered graphically. Showing architecture source below.");
           setRendered(false);
         }
       }
