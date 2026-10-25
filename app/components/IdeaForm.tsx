@@ -3,6 +3,7 @@
 import { useState, useCallback, forwardRef, useEffect } from "react";
 import { Sparkles, ChevronDown, X } from "lucide-react";
 import { IdeaRequest, IdeaRequestSchema } from "@/lib/types";
+import ElectricBorder from "@/components/ElectricBorder";
 
 const CATEGORIES = [
   { value: "web", label: "Web App" },
@@ -119,7 +120,18 @@ const IdeaForm = forwardRef<HTMLDivElement, IdeaFormProps>(function IdeaForm(
         </p>
       </div>
 
-      <div className="glass-card" style={{ padding: "2rem" }}>
+      <ElectricBorder
+        color="#8b5cf6"
+        glowColor="#06b6d4"
+        speed={0.8}
+        chaos={0.4}
+        spread={0.5}
+        strands={3}
+        thickness={1.5}
+        borderRadius={16}
+        interactive
+      >
+        <div className="glass-card" style={{ padding: "2rem", borderRadius: "16px" }}>
         <form onSubmit={handleSubmit} noValidate style={{ display: "flex", flexDirection: "column", gap: "1.4rem" }}>
 
           {/* Project Name */}
@@ -377,7 +389,8 @@ const IdeaForm = forwardRef<HTMLDivElement, IdeaFormProps>(function IdeaForm(
             )}
           </button>
         </form>
-      </div>
+        </div>
+      </ElectricBorder>
     </div>
   );
 });

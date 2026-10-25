@@ -4,6 +4,7 @@ import { useState, useCallback } from "react";
 import { Clock, Cpu, Layers, Sparkles, FlaskConical } from "lucide-react";
 import { IdeaRequest } from "@/lib/types";
 import FluxLines from "@/components/FluxLines";
+import AnimatedContent from "@/components/AnimatedContent";
 
 // ─── Sample ideas ─────────────────────────────────────────────────────────────
 const SAMPLE_IDEAS: { label: string; emoji: string; data: IdeaRequest }[] = [
@@ -146,110 +147,125 @@ export default function LandingHero({
         }}
       />
 
-      {/* ── Badge ─────────────────────────────────────────────────────── */}
-      <div className="relative z-10 flex justify-center mb-7 animate-fade-in-up">
-        <div
-          className="badge gap-2 px-4 py-2"
-          style={{ fontSize: "0.8rem" }}
-        >
-          <Sparkles size={12} style={{ color: "#a78bfa" }} />
-          Powered by Google Gemma AI
-        </div>
-      </div>
-
-      {/* ── Headline ──────────────────────────────────────────────────── */}
-      <div
-        className="relative z-10 text-center animate-fade-in-up animate-delay-100"
-        style={{ maxWidth: 720, margin: "0 auto" }}
+      {/* ── Badge, Headline & CTA ─────────────────────────────────────────────── */}
+      <AnimatedContent
+        distance={40}
+        direction="vertical"
+        duration={0.8}
+        ease="power3.out"
+        trigger="mount"
+        className="relative z-10"
       >
-        <h1
-          style={{
-            fontSize: "clamp(2.4rem, 6vw, 4.5rem)",
-            fontWeight: 800,
-            lineHeight: 1.1,
-            letterSpacing: "-0.03em",
-            marginBottom: "1.25rem",
-          }}
-        >
-          <span style={{ color: "#f1f5f9" }}>Turn your idea into a </span>
-          <span className="gradient-text">winning blueprint</span>
-        </h1>
-        <p
-          style={{
-            fontSize: "1.1rem",
-            color: "#94a3b8",
-            lineHeight: 1.7,
-            maxWidth: 560,
-            margin: "0 auto 2.5rem",
-          }}
-        >
-          Paste your hackathon concept and get a complete software development
-          plan — architecture, APIs, database schemas, roadmap and a judging
-          pitch — in under 30 seconds.
-        </p>
-
-        {/* ── CTA buttons ────────────────────────────────────────────── */}
-        <div
-          style={{
-            display: "flex",
-            gap: "0.75rem",
-            justifyContent: "center",
-            flexWrap: "wrap",
-            marginBottom: "3.5rem",
-          }}
-        >
-          <button
-            id="hero-cta-button"
-            onClick={onScrollToForm}
-            className="btn-gradient"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "0.5rem",
-              padding: "0.85rem 2rem",
-              borderRadius: "12px",
-              fontSize: "0.95rem",
-            }}
+        <div className="flex justify-center mb-7">
+          <div
+            className="badge gap-2 px-4 py-2"
+            style={{ fontSize: "0.8rem" }}
           >
-            <Sparkles size={16} />
-            Generate My Plan
-          </button>
-
-          <button
-            id="demo-mode-button"
-            onClick={onDemoMode}
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "0.5rem",
-              padding: "0.85rem 2rem",
-              borderRadius: "12px",
-              fontSize: "0.95rem",
-              fontWeight: 500,
-              border: "1px solid rgba(99,102,241,0.35)",
-              color: "#a5b4fc",
-              background: "rgba(99,102,241,0.08)",
-              cursor: "pointer",
-              transition: "all 0.2s ease",
-            }}
-            onMouseEnter={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.background =
-                "rgba(99,102,241,0.15)";
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.background =
-                "rgba(99,102,241,0.08)";
-            }}
-          >
-            <FlaskConical size={16} />
-            Preview Demo
-          </button>
+            <Sparkles size={12} style={{ color: "#a78bfa" }} />
+            Powered by Google Gemma AI
+          </div>
         </div>
-      </div>
+
+        <div
+          className="text-center"
+          style={{ maxWidth: 720, margin: "0 auto" }}
+        >
+          <h1
+            style={{
+              fontSize: "clamp(2.4rem, 6vw, 4.5rem)",
+              fontWeight: 800,
+              lineHeight: 1.1,
+              letterSpacing: "-0.03em",
+              marginBottom: "1.25rem",
+            }}
+          >
+            <span style={{ color: "#f1f5f9" }}>Turn your idea into a </span>
+            <span className="gradient-text">winning blueprint</span>
+          </h1>
+          <p
+            style={{
+              fontSize: "1.1rem",
+              color: "#94a3b8",
+              lineHeight: 1.7,
+              maxWidth: 560,
+              margin: "0 auto 2.5rem",
+            }}
+          >
+            Paste your hackathon concept and get a complete software development
+            plan — architecture, APIs, database schemas, roadmap and a judging
+            pitch — in under 30 seconds.
+          </p>
+
+          {/* ── CTA buttons ────────────────────────────────────────────── */}
+          <div
+            style={{
+              display: "flex",
+              gap: "0.75rem",
+              justifyContent: "center",
+              flexWrap: "wrap",
+              marginBottom: "3.5rem",
+            }}
+          >
+            <button
+              id="hero-cta-button"
+              onClick={onScrollToForm}
+              className="btn-gradient"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.5rem",
+                padding: "0.85rem 2rem",
+                borderRadius: "12px",
+                fontSize: "0.95rem",
+              }}
+            >
+              <Sparkles size={16} />
+              Generate My Plan
+            </button>
+
+            <button
+              id="demo-mode-button"
+              onClick={onDemoMode}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.5rem",
+                padding: "0.85rem 2rem",
+                borderRadius: "12px",
+                fontSize: "0.95rem",
+                fontWeight: 500,
+                border: "1px solid rgba(99,102,241,0.35)",
+                color: "#a5b4fc",
+                background: "rgba(99,102,241,0.08)",
+                cursor: "pointer",
+                transition: "all 0.2s ease",
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.background =
+                  "rgba(99,102,241,0.15)";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.background =
+                  "rgba(99,102,241,0.08)";
+              }}
+            >
+              <FlaskConical size={16} />
+              Preview Demo
+            </button>
+          </div>
+        </div>
+      </AnimatedContent>
 
       {/* ── Pillars ───────────────────────────────────────────────────── */}
-      <div
-        className="relative z-10 animate-fade-in-up animate-delay-200"
+      <AnimatedContent
+        distance={35}
+        direction="vertical"
+        duration={0.7}
+        ease="power3.out"
+        stagger={0.1}
+        delay={0.15}
+        trigger="mount"
+        className="relative z-10"
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
@@ -281,11 +297,17 @@ export default function LandingHero({
             <p style={{ fontSize: "0.75rem", color: "#64748b", lineHeight: 1.5 }}>{p.desc}</p>
           </div>
         ))}
-      </div>
+      </AnimatedContent>
 
       {/* ── Sample ideas ─────────────────────────────────────────────── */}
-      <div
-        className="relative z-10 animate-fade-in-up animate-delay-300"
+      <AnimatedContent
+        distance={30}
+        direction="vertical"
+        duration={0.7}
+        ease="power3.out"
+        delay={0.25}
+        trigger="mount"
+        className="relative z-10"
         style={{ maxWidth: 720, margin: "0 auto" }}
       >
         <p
@@ -301,7 +323,13 @@ export default function LandingHero({
         >
           Or quick-start with a sample idea
         </p>
-        <div
+        <AnimatedContent
+          distance={25}
+          direction="vertical"
+          duration={0.6}
+          ease="power3.out"
+          stagger={0.08}
+          trigger="mount"
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
@@ -339,8 +367,8 @@ export default function LandingHero({
               </p>
             </button>
           ))}
-        </div>
-      </div>
+        </AnimatedContent>
+      </AnimatedContent>
     </section>
   );
 }
