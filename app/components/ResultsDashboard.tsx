@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import {
   Layers, Database, GitBranch, CheckSquare, AlertTriangle,
   Play, Mic, Star, Clock, Users, Zap, ChevronRight, Server, Globe, Save, RotateCcw,
-  Download, FileText
+  Download
 } from "lucide-react";
 import { ProjectPlan, IdeaRequest } from "@/lib/types";
 import CopyButton from "./CopyButton";

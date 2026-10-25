@@ -60,14 +60,7 @@ export default function Navbar() {
 
         {/* Right side */}
         <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-          <span
-            style={{
-              fontSize: "0.75rem",
-              color: "#475569",
-              display: "none",
-            }}
-            className="sm-visible"
-          >
+          <span className="hidden sm:inline-block text-xs text-slate-400">
             Powered by Gemma AI
           </span>
           <a

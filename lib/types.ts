@@ -18,71 +18,86 @@ export type IdeaRequest = z.infer<typeof IdeaRequestSchema>;
 // ─── Response Schema ──────────────────────────────────────────────────────────
 
 export const UserStorySchema = z.object({
-  role: z.string(),
-  action: z.string(),
-  benefit: z.string(),
+  role: z.string().default("user"),
+  action: z.string().default("use the application"),
+  benefit: z.string().default("achieve my goal"),
 });
 
 export const FeatureSchema = z.object({
-  name: z.string(),
-  description: z.string(),
-  priority: z.enum(["must-have", "should-have", "nice-to-have"]).optional(),
-  estimatedHours: z.number().optional(),
+  name: z.string().default("Feature"),
+  description: z.string().default(""),
+  priority: z.preprocess(
+    (v) => (typeof v === "string" ? v.toLowerCase().trim() : undefined),
+    z.enum(["must-have", "should-have", "nice-to-have"]).optional()
+  ),
+  estimatedHours: z.coerce.number().optional(),
 });
 
 export const TechChoiceSchema = z.object({
-  category: z.string(),
-  technology: z.string(),
-  reasoning: z.string(),
+  category: z.string().default("General"),
+  technology: z.string().default("Standard"),
+  reasoning: z.string().default(""),
 });
 
 export const ApiEndpointSchema = z.object({
-  method: z.enum(["GET", "POST", "PUT", "PATCH", "DELETE"]),
-  path: z.string(),
-  description: z.string(),
-  requestExample: z.string().optional(),
-  responseExample: z.string().optional(),
+  method: z.preprocess(
+    (v) => (typeof v === "string" ? v.toUpperCase().trim() : "GET"),
+    z.enum(["GET", "POST", "PUT", "PATCH", "DELETE"]).catch("GET")
+  ),
+  path: z.string().default("/api"),
+  description: z.string().default(""),
+  requestExample: z.preprocess((v) => {
+    if (typeof v === "object" && v !== null) return JSON.stringify(v, null, 2);
+    return typeof v === "string" ? v : undefined;
+  }, z.string().optional()),
+  responseExample: z.preprocess((v) => {
+    if (typeof v === "object" && v !== null) return JSON.stringify(v, null, 2);
+    return typeof v === "string" ? v : undefined;
+  }, z.string().optional()),
 });
 
 export const DatabaseTableSchema = z.object({
-  tableName: z.string(),
+  tableName: z.string().default("items"),
   fields: z.array(z.object({
-    name: z.string(),
-    type: z.string(),
+    name: z.string().default("id"),
+    type: z.string().default("string"),
     constraints: z.string().optional(),
-  })),
+  })).default([]),
   relationships: z.string().optional(),
 });
 
 export const RoadmapPhaseSchema = z.object({
-  phase: z.string(),
-  timeBox: z.string(),
-  tasks: z.array(z.string()),
+  phase: z.string().default("Phase"),
+  timeBox: z.string().default("Hour 0"),
+  tasks: z.array(z.string()).default([]),
 });
 
 export const RiskSchema = z.object({
-  risk: z.string(),
-  mitigation: z.string(),
-  severity: z.enum(["low", "medium", "high"]).optional(),
+  risk: z.string().default(""),
+  mitigation: z.string().default(""),
+  severity: z.preprocess(
+    (v) => (typeof v === "string" ? v.toLowerCase().trim() : undefined),
+    z.enum(["low", "medium", "high"]).optional()
+  ),
 });
 
 export const ProjectPlanSchema = z.object({
-  projectTitle: z.string(),
-  problemStatement: z.string(),
-  solutionSummary: z.string(),
-  targetUsers: z.array(z.string()),
-  userStories: z.array(UserStorySchema),
-  mvpFeatures: z.array(FeatureSchema),
-  futureFeatures: z.array(FeatureSchema),
-  techStack: z.array(TechChoiceSchema),
-  mermaidDiagram: z.string(),
-  apiEndpoints: z.array(ApiEndpointSchema),
-  databaseTables: z.array(DatabaseTableSchema),
-  roadmap: z.array(RoadmapPhaseSchema),
-  testingChecklist: z.array(z.string()),
-  risks: z.array(RiskSchema),
-  demoScript: z.string(),
-  judgingPitch: z.string(),
+  projectTitle: z.string().default("Hackathon Project"),
+  problemStatement: z.string().default(""),
+  solutionSummary: z.string().default(""),
+  targetUsers: z.array(z.string()).default([]),
+  userStories: z.array(UserStorySchema).default([]),
+  mvpFeatures: z.array(FeatureSchema).default([]),
+  futureFeatures: z.array(FeatureSchema).default([]),
+  techStack: z.array(TechChoiceSchema).default([]),
+  mermaidDiagram: z.string().default("graph TD\n  Client[Frontend App] --> Server[Backend API]\n  Server --> DB[(Database)]"),
+  apiEndpoints: z.array(ApiEndpointSchema).default([]),
+  databaseTables: z.array(DatabaseTableSchema).default([]),
+  roadmap: z.array(RoadmapPhaseSchema).default([]),
+  testingChecklist: z.array(z.string()).default([]),
+  risks: z.array(RiskSchema).default([]),
+  demoScript: z.string().default(""),
+  judgingPitch: z.string().default(""),
 });
 
 export type ProjectPlan = z.infer<typeof ProjectPlanSchema>;

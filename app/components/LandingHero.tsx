@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { Zap, Clock, Code2, Cpu, Layers, Sparkles, FlaskConical } from "lucide-react";
+import { Clock, Cpu, Layers, Sparkles, FlaskConical } from "lucide-react";
 import { IdeaRequest } from "@/lib/types";
 
 // ─── Sample ideas ─────────────────────────────────────────────────────────────

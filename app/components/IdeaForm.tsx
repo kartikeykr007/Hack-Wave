@@ -208,7 +208,7 @@ const IdeaForm = forwardRef<HTMLDivElement, IdeaFormProps>(function IdeaForm(
           </div>
 
           {/* Category + Skill Level */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label
                 htmlFor="category"

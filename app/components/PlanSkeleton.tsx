@@ -43,7 +43,7 @@ export default function PlanSkeleton() {
         <div className="skeleton" style={{ height: 28, width: "55%", marginBottom: "1.5rem" }} />
 
         {/* Two-col cards */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "1.5rem" }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
           <div className="skeleton" style={{ height: 100, borderRadius: 12 }} />
           <div className="skeleton" style={{ height: 100, borderRadius: 12 }} />
         </div>
@@ -58,7 +58,7 @@ export default function PlanSkeleton() {
         ))}
 
         {/* Feature cards row */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "0.75rem", marginTop: "1.5rem" }}>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-6">
           {[1, 2, 3].map((i) => (
             <div key={i} className="skeleton" style={{ height: 90, borderRadius: 12 }} />
           ))}
