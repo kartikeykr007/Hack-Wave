@@ -5,31 +5,97 @@ import { Sparkles, GitFork } from "lucide-react";
 export default function Navbar() {
   return (
     <header
-      className="fixed top-0 left-0 right-0 z-50"
       style={{
-        background: "rgba(10,15,30,0.85)",
-        backdropFilter: "blur(12px)",
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 50,
+        height: "56px",
+        display: "flex",
+        alignItems: "center",
+        background: "rgba(8,13,26,0.85)",
+        backdropFilter: "blur(14px)",
+        WebkitBackdropFilter: "blur(14px)",
         borderBottom: "1px solid rgba(99,102,241,0.15)",
+        padding: "0 1.5rem",
       }}
     >
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between h-14">
-        <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-lg flex items-center justify-center"
-            style={{ background: "linear-gradient(135deg, #6366f1, #8b5cf6)" }}>
-            <Sparkles size={14} className="text-white" />
+      <div
+        style={{
+          maxWidth: 1200,
+          margin: "0 auto",
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        {/* Brand */}
+        <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+          <div
+            style={{
+              width: 30,
+              height: 30,
+              borderRadius: 8,
+              background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+            }}
+          >
+            <Sparkles size={14} color="#fff" />
           </div>
-          <span className="text-sm font-bold text-white">Hackathon Copilot</span>
-          <span className="badge text-xs hidden sm:inline-flex">Beta</span>
+          <span style={{ fontSize: "0.9rem", fontWeight: 700, color: "#f1f5f9" }}>
+            Hackathon Copilot
+          </span>
+          <span
+            className="badge"
+            style={{ fontSize: "0.65rem", padding: "2px 8px", display: "none" }}
+          >
+            Beta
+          </span>
         </div>
 
-        <div className="flex items-center gap-3">
-          <span className="hidden sm:block text-xs text-slate-500">Powered by Gemma AI</span>
+        {/* Right side */}
+        <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+          <span
+            style={{
+              fontSize: "0.75rem",
+              color: "#475569",
+              display: "none",
+            }}
+            className="sm-visible"
+          >
+            Powered by Gemma AI
+          </span>
           <a
-            href="https://github.com"
+            href="https://github.com/kartikeykr007/Hack-Wave"
             target="_blank"
             rel="noopener noreferrer"
-            className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-all duration-200"
-            aria-label="GitHub"
+            aria-label="GitHub repository"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: 34,
+              height: 34,
+              borderRadius: 8,
+              color: "#64748b",
+              transition: "color 0.15s, background 0.15s",
+              textDecoration: "none",
+            }}
+            onMouseEnter={(e) => {
+              const el = e.currentTarget as HTMLAnchorElement;
+              el.style.color = "#f1f5f9";
+              el.style.background = "rgba(255,255,255,0.06)";
+            }}
+            onMouseLeave={(e) => {
+              const el = e.currentTarget as HTMLAnchorElement;
+              el.style.color = "#64748b";
+              el.style.background = "transparent";
+            }}
           >
             <GitFork size={16} />
           </a>

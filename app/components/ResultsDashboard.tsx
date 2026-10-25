@@ -50,6 +50,7 @@ interface ResultsDashboardProps {
   onSave: () => void;
   onReset: () => void;
   isSaved: boolean;
+  isDemo?: boolean;
 }
 
 export default function ResultsDashboard({
@@ -60,6 +61,7 @@ export default function ResultsDashboard({
   onSave,
   onReset,
   isSaved,
+  isDemo = false,
 }: ResultsDashboardProps) {
   const [activeTab, setActiveTab] = useState<TabId>("overview");
 
@@ -68,6 +70,28 @@ export default function ResultsDashboard({
 
   return (
     <div className="max-w-5xl mx-auto px-4 pb-20 animate-fade-in-up">
+      {/* Demo mode banner */}
+      {isDemo && (
+        <div
+          style={{
+            marginBottom: "1rem",
+            padding: "0.75rem 1rem",
+            borderRadius: "10px",
+            background: "rgba(245,158,11,0.1)",
+            border: "1px solid rgba(245,158,11,0.3)",
+            display: "flex",
+            alignItems: "center",
+            gap: "0.6rem",
+            fontSize: "0.8rem",
+            color: "#fcd34d",
+          }}
+        >
+          <span>🧪</span>
+          <span>
+            <strong>Demo mode</strong> — This is a pre-generated sample plan. Submit your own idea above to generate a real blueprint with Gemma AI.
+          </span>
+        </div>
+      )}
       {/* Header bar */}
       <div className="glass-card p-4 sm:p-5 mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>

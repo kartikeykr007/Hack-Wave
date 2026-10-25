@@ -12,22 +12,48 @@ interface ErrorBannerProps {
 export default function ErrorBanner({ error, details, onRetry, onDismiss }: ErrorBannerProps) {
   return (
     <div
-      className="max-w-2xl mx-auto px-4 mb-6 animate-fade-in-up"
+      className="animate-fade-in-up"
+      style={{ maxWidth: 640, margin: "0 auto 1.5rem", padding: "0 1rem" }}
       role="alert"
       aria-live="assertive"
     >
-      <div className="p-4 rounded-xl flex items-start gap-3"
-        style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)" }}>
-        <AlertCircle size={16} className="text-red-400 flex-shrink-0 mt-0.5" />
-        <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-red-300">{error}</p>
-          {details && <p className="text-xs text-red-400/80 mt-1">{details}</p>}
+      <div
+        style={{
+          padding: "1rem 1.25rem",
+          borderRadius: "12px",
+          background: "rgba(239,68,68,0.1)",
+          border: "1px solid rgba(239,68,68,0.3)",
+          display: "flex",
+          alignItems: "flex-start",
+          gap: "0.75rem",
+        }}
+      >
+        <AlertCircle size={16} style={{ color: "#f87171", flexShrink: 0, marginTop: "2px" }} />
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <p style={{ fontSize: "0.875rem", fontWeight: 600, color: "#fca5a5" }}>{error}</p>
+          {details && (
+            <p style={{ fontSize: "0.78rem", color: "rgba(252,165,165,0.75)", marginTop: "0.25rem" }}>
+              {details}
+            </p>
+          )}
           {onRetry && (
             <button
               id="retry-button"
               onClick={onRetry}
-              className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200"
-              style={{ background: "rgba(239,68,68,0.15)", border: "1px solid rgba(239,68,68,0.3)", color: "#fca5a5" }}
+              style={{
+                marginTop: "0.75rem",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.4rem",
+                padding: "0.35rem 0.85rem",
+                borderRadius: "8px",
+                fontSize: "0.78rem",
+                fontWeight: 500,
+                background: "rgba(239,68,68,0.15)",
+                border: "1px solid rgba(239,68,68,0.35)",
+                color: "#fca5a5",
+                cursor: "pointer",
+              }}
             >
               <RotateCcw size={11} />
               Retry
@@ -37,7 +63,15 @@ export default function ErrorBanner({ error, details, onRetry, onDismiss }: Erro
         {onDismiss && (
           <button
             onClick={onDismiss}
-            className="flex-shrink-0 p-1 rounded text-red-400/60 hover:text-red-300 transition-colors"
+            style={{
+              color: "rgba(252,165,165,0.5)",
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              padding: "2px",
+              flexShrink: 0,
+            }}
+            aria-label="Dismiss error"
           >
             <X size={14} />
           </button>

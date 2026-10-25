@@ -1,9 +1,9 @@
 "use client";
 
 import { useRef, useState, useCallback, useEffect } from "react";
-import { IdeaRequest, ProjectPlan, GenerateResponse, GenerateError } from "@/lib/types";
+import { IdeaRequest, ProjectPlan, GenerateResponse, GenerateError, SavedPlan } from "@/lib/types";
 import { savePlan, generateId } from "@/lib/storage";
-import { SavedPlan } from "@/lib/types";
+import { DEMO_PLAN, DEMO_META } from "@/lib/demo";
 
 import Navbar from "./components/Navbar";
 import LandingHero from "./components/LandingHero";
@@ -13,84 +13,128 @@ import ResultsDashboard from "./components/ResultsDashboard";
 import ErrorBanner from "./components/ErrorBanner";
 import SavedPlans from "./components/SavedPlans";
 
+// ─── App state machine ────────────────────────────────────────────────────────
 type AppState =
   | { status: "idle" }
   | { status: "loading"; request: IdeaRequest }
-  | { status: "success"; request: IdeaRequest; plan: ProjectPlan; modelUsed: string; generatedAt: string; savedId: string | null }
+  | {
+      status: "success";
+      request: IdeaRequest;
+      plan: ProjectPlan;
+      modelUsed: string;
+      generatedAt: string;
+      savedId: string | null;
+      isDemo: boolean;
+    }
   | { status: "error"; request: IdeaRequest; error: string; details?: string };
+
+const DEMO_REQUEST: IdeaRequest = {
+  projectName: "StudyAI",
+  description: "AI-powered adaptive study companion",
+  category: "ai-ml",
+  skillLevel: "intermediate",
+  duration: "24h",
+  technologies: "Next.js, Gemma AI, Tailwind CSS",
+};
 
 export default function Home() {
   const formRef = useRef<HTMLDivElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
+
   const [appState, setAppState] = useState<AppState>({ status: "idle" });
   const [sampleIdea, setSampleIdea] = useState<IdeaRequest | undefined>(undefined);
   const [savedRefresh, setSavedRefresh] = useState(0);
 
+  // ─── Scroll helpers ─────────────────────────────────────────────────────────
   const scrollToForm = useCallback(() => {
     setTimeout(() => {
       formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 100);
+    }, 80);
   }, []);
 
   const scrollToResults = useCallback(() => {
     setTimeout(() => {
       resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 100);
+    }, 80);
   }, []);
 
+  // When a sample idea is selected, scroll to form
+  useEffect(() => {
+    if (sampleIdea) scrollToForm();
+  }, [sampleIdea, scrollToForm]);
+
+  // ─── Handlers ───────────────────────────────────────────────────────────────
   const handleSelectSample = useCallback((idea: IdeaRequest) => {
     setSampleIdea(idea);
     setAppState({ status: "idle" });
   }, []);
 
-  const handleSubmit = useCallback(async (request: IdeaRequest) => {
-    setAppState({ status: "loading", request });
+  /** Load the demo plan instantly without hitting the API */
+  const handleDemoMode = useCallback(() => {
+    setAppState({
+      status: "success",
+      request: DEMO_REQUEST,
+      plan: DEMO_PLAN,
+      modelUsed: DEMO_META.modelUsed,
+      generatedAt: DEMO_META.generatedAt,
+      savedId: null,
+      isDemo: true,
+    });
+    scrollToResults();
+  }, [scrollToResults]);
 
-    try {
-      const res = await fetch("/api/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(request),
-      });
+  const handleSubmit = useCallback(
+    async (request: IdeaRequest) => {
+      setAppState({ status: "loading", request });
 
-      const data = (await res.json()) as GenerateResponse | GenerateError;
+      try {
+        const res = await fetch("/api/generate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(request),
+        });
 
-      if (!res.ok || "error" in data) {
-        const errData = data as GenerateError;
+        const data = (await res.json()) as GenerateResponse | GenerateError;
+
+        if (!res.ok || "error" in data) {
+          const errData = data as GenerateError;
+          setAppState({
+            status: "error",
+            request,
+            error: errData.error || "Generation failed",
+            details: errData.details,
+          });
+          return;
+        }
+
+        const ok = data as GenerateResponse;
+        setAppState({
+          status: "success",
+          request,
+          plan: ok.plan,
+          modelUsed: ok.modelUsed,
+          generatedAt: ok.generatedAt,
+          savedId: null,
+          isDemo: false,
+        });
+        scrollToResults();
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : "Network error";
         setAppState({
           status: "error",
           request,
-          error: errData.error || "Generation failed",
-          details: errData.details,
+          error: "Connection error",
+          details: msg.includes("fetch")
+            ? "Could not reach the server. Check your connection."
+            : msg,
         });
-        return;
       }
-
-      const successData = data as GenerateResponse;
-      setAppState({
-        status: "success",
-        request,
-        plan: successData.plan,
-        modelUsed: successData.modelUsed,
-        generatedAt: successData.generatedAt,
-        savedId: null,
-      });
-      scrollToResults();
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Network error";
-      setAppState({
-        status: "error",
-        request,
-        error: "Connection error",
-        details: message.includes("fetch") ? "Could not reach the server. Please check your connection." : message,
-      });
-    }
-  }, [scrollToResults]);
+    },
+    [scrollToResults]
+  );
 
   const handleRetry = useCallback(() => {
-    if (appState.status === "error") {
-      handleSubmit(appState.request);
-    }
+    if (appState.status === "error") handleSubmit(appState.request);
   }, [appState, handleSubmit]);
 
   const handleSave = useCallback(() => {
@@ -105,21 +149,27 @@ export default function Home() {
       request: appState.request,
     };
     savePlan(saved);
-    setAppState((prev) => prev.status === "success" ? { ...prev, savedId: id } : prev);
+    setAppState((prev) =>
+      prev.status === "success" ? { ...prev, savedId: id } : prev
+    );
     setSavedRefresh((n) => n + 1);
   }, [appState]);
 
-  const handleLoadSaved = useCallback((saved: SavedPlan) => {
-    setAppState({
-      status: "success",
-      request: saved.request,
-      plan: saved.plan,
-      modelUsed: saved.modelUsed,
-      generatedAt: saved.generatedAt,
-      savedId: saved.id,
-    });
-    scrollToResults();
-  }, [scrollToResults]);
+  const handleLoadSaved = useCallback(
+    (saved: SavedPlan) => {
+      setAppState({
+        status: "success",
+        request: saved.request,
+        plan: saved.plan,
+        modelUsed: saved.modelUsed,
+        generatedAt: saved.generatedAt,
+        savedId: saved.id,
+        isDemo: false,
+      });
+      scrollToResults();
+    },
+    [scrollToResults]
+  );
 
   const handleReset = useCallback(() => {
     setAppState({ status: "idle" });
@@ -127,36 +177,43 @@ export default function Home() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
-  // Update form when sample idea changes
-  useEffect(() => {
-    if (sampleIdea) scrollToForm();
-  }, [sampleIdea, scrollToForm]);
-
-  const showResults = appState.status === "success";
-  const showLoading = appState.status === "loading";
-  const showError = appState.status === "error";
-  const showForm = !showResults && !showLoading;
+  // ─── Derived view flags ──────────────────────────────────────────────────────
+  const isLoading = appState.status === "loading";
+  const isSuccess = appState.status === "success";
+  const isError = appState.status === "error";
+  const showHero = !isSuccess && !isLoading;
+  const showForm = !isSuccess && !isLoading;
 
   return (
-    <div className="min-h-screen bg-gradient-radial noise-overlay">
+    <div className="relative min-h-screen" style={{ background: "var(--bg-primary)" }}>
+      {/* Animated background blobs */}
+      <div className="bg-scene" aria-hidden="true">
+        <div className="bg-blob bg-blob-1" />
+        <div className="bg-blob bg-blob-2" />
+        <div className="bg-blob bg-blob-3" />
+      </div>
+
+      {/* Fixed nav */}
       <Navbar />
 
-      {/* Main content */}
-      <main className="pt-14 relative z-10">
-        {/* Landing hero — hide when viewing results */}
-        {!showResults && !showLoading && (
+      {/* Content layer — above blobs */}
+      <main className="relative z-10 pt-14">
+        {/* ── Hero ─────────────────────────────────────────────────────── */}
+        {showHero && (
           <LandingHero
             onSelectSample={handleSelectSample}
             onScrollToForm={scrollToForm}
+            onDemoMode={handleDemoMode}
           />
         )}
 
-        {/* Saved plans */}
-        {!showLoading && !showResults && (
+        {/* ── Saved plans ──────────────────────────────────────────────── */}
+        {showHero && (
           <SavedPlans onLoad={handleLoadSaved} refreshTrigger={savedRefresh} />
         )}
 
-        {showError && appState.status === "error" && (
+        {/* ── Error banner ─────────────────────────────────────────────── */}
+        {isError && appState.status === "error" && (
           <ErrorBanner
             error={appState.error}
             details={appState.details}
@@ -165,26 +222,27 @@ export default function Home() {
           />
         )}
 
-        {/* Idea form */}
-        {showForm && !showLoading && (
+        {/* ── Idea form ─────────────────────────────────────────────────── */}
+        {showForm && (
           <IdeaForm
             ref={formRef}
-            key={sampleIdea ? JSON.stringify(sampleIdea) : "empty"}
+            /* key forces full remount when sample changes — correct approach */
+            key={sampleIdea ? JSON.stringify(sampleIdea) : "__empty__"}
             defaultValues={sampleIdea}
             onSubmit={handleSubmit}
-            isLoading={false}
+            isLoading={isLoading}
           />
         )}
 
-        {/* Loading skeleton */}
-        {showLoading && (
+        {/* ── Loading skeleton ──────────────────────────────────────────── */}
+        {isLoading && (
           <div ref={resultsRef}>
             <PlanSkeleton />
           </div>
         )}
 
-        {/* Results */}
-        {showResults && appState.status === "success" && (
+        {/* ── Results dashboard ─────────────────────────────────────────── */}
+        {isSuccess && appState.status === "success" && (
           <div ref={resultsRef}>
             <ResultsDashboard
               plan={appState.plan}
@@ -194,15 +252,18 @@ export default function Home() {
               onSave={handleSave}
               onReset={handleReset}
               isSaved={appState.savedId !== null}
+              isDemo={appState.isDemo}
             />
           </div>
         )}
       </main>
 
       {/* Footer */}
-      <footer className="relative z-10 text-center py-8 px-4"
-        style={{ borderTop: "1px solid rgba(99,102,241,0.1)" }}>
-        <p className="text-xs text-slate-600">
+      <footer
+        className="relative z-10 text-center py-8 px-4 mt-8"
+        style={{ borderTop: "1px solid rgba(99,102,241,0.1)" }}
+      >
+        <p className="text-xs" style={{ color: "var(--text-muted)" }}>
           Hackathon Copilot · Powered by Google Gemma AI · Built for builders
         </p>
       </footer>

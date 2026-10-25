@@ -1,16 +1,18 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { Zap, Clock, Code2, Cpu, Layers, Sparkles } from "lucide-react";
+import { Zap, Clock, Code2, Cpu, Layers, Sparkles, FlaskConical } from "lucide-react";
 import { IdeaRequest } from "@/lib/types";
 
-const SAMPLE_IDEAS: { label: string; icon: React.ReactNode; data: IdeaRequest }[] = [
+// ─── Sample ideas ─────────────────────────────────────────────────────────────
+const SAMPLE_IDEAS: { label: string; emoji: string; data: IdeaRequest }[] = [
   {
     label: "AI Study Buddy",
-    icon: <Cpu size={14} />,
+    emoji: "🧠",
     data: {
       projectName: "StudyAI",
-      description: "An AI-powered study companion that generates personalized quizzes, flashcards, and summaries from any study material (PDFs, notes, YouTube links). Students upload their content and the AI creates adaptive practice tests that focus on weak areas.",
+      description:
+        "An AI-powered study companion that generates personalized quizzes, flashcards, and summaries from any study material (PDFs, notes, YouTube links). Students upload their content and the AI creates adaptive practice tests that focus on weak areas.",
       category: "ai-ml",
       skillLevel: "intermediate",
       duration: "24h",
@@ -19,10 +21,11 @@ const SAMPLE_IDEAS: { label: string; icon: React.ReactNode; data: IdeaRequest }[
   },
   {
     label: "Dev Event Finder",
-    icon: <Code2 size={14} />,
+    emoji: "📅",
     data: {
       projectName: "DevConnect",
-      description: "A platform where developers can discover local and online hackathons, tech meetups, and open-source sprints. Features include personalized recommendations based on skills and interests, team formation tools, and project showcase.",
+      description:
+        "A platform where developers can discover local and online hackathons, tech meetups, and open-source sprints. Features include personalized recommendations based on skills and interests, team formation tools, and project showcase.",
       category: "web",
       skillLevel: "beginner",
       duration: "48h",
@@ -31,10 +34,11 @@ const SAMPLE_IDEAS: { label: string; icon: React.ReactNode; data: IdeaRequest }[
   },
   {
     label: "Smart Budget Tracker",
-    icon: <Layers size={14} />,
+    emoji: "💰",
     data: {
       projectName: "BudgetWise",
-      description: "A mobile-first personal finance app that uses AI to categorize expenses automatically, detect spending patterns, and provide actionable savings recommendations. Users can set goals and get smart nudges when they are about to overspend.",
+      description:
+        "A mobile-first personal finance app that uses AI to categorize expenses automatically, detect spending patterns, and provide actionable savings recommendations. Users can set goals and get smart nudges when they are about to overspend.",
       category: "fintech",
       skillLevel: "advanced",
       duration: "36h",
@@ -43,10 +47,11 @@ const SAMPLE_IDEAS: { label: string; icon: React.ReactNode; data: IdeaRequest }[
   },
   {
     label: "IoT Home Monitor",
-    icon: <Zap size={14} />,
+    emoji: "🏠",
     data: {
       projectName: "HomeGuard",
-      description: "A smart home monitoring dashboard that aggregates data from IoT sensors (temperature, humidity, motion, energy) and uses ML to detect anomalies, predict maintenance needs, and optimize energy consumption.",
+      description:
+        "A smart home monitoring dashboard that aggregates data from IoT sensors (temperature, humidity, motion, energy) and uses ML to detect anomalies, predict maintenance needs, and optimize energy consumption.",
       category: "iot",
       skillLevel: "advanced",
       duration: "48h",
@@ -55,108 +60,225 @@ const SAMPLE_IDEAS: { label: string; icon: React.ReactNode; data: IdeaRequest }[
   },
 ];
 
-const FEATURE_HIGHLIGHTS = [
+const PILLARS = [
   {
-    icon: <Cpu size={20} />,
+    icon: <Cpu size={18} />,
     title: "Gemma AI-Powered",
-    desc: "Uses Google's Gemma model to generate context-aware, realistic plans",
+    desc: "Generates context-aware, realistic plans using Google's Gemma model",
   },
   {
-    icon: <Clock size={20} />,
+    icon: <Clock size={18} />,
     title: "Time-Boxed Roadmaps",
-    desc: "Roadmaps calibrated to your exact hackathon duration",
+    desc: "Calibrated precisely to your hackathon duration",
   },
   {
-    icon: <Sparkles size={20} />,
-    title: "Full Blueprints",
-    desc: "Architecture diagrams, API specs, DB schemas and judging pitches",
+    icon: <Layers size={18} />,
+    title: "Complete Blueprints",
+    desc: "Architecture diagrams, API specs, DB schemas, and judging pitches",
   },
 ];
 
 interface LandingHeroProps {
   onSelectSample: (idea: IdeaRequest) => void;
   onScrollToForm: () => void;
+  onDemoMode: () => void;
 }
 
-export default function LandingHero({ onSelectSample, onScrollToForm }: LandingHeroProps) {
+export default function LandingHero({
+  onSelectSample,
+  onScrollToForm,
+  onDemoMode,
+}: LandingHeroProps) {
   const [hoveredSample, setHoveredSample] = useState<number | null>(null);
 
-  const handleSampleClick = useCallback((idea: IdeaRequest) => {
-    onSelectSample(idea);
-    onScrollToForm();
-  }, [onSelectSample, onScrollToForm]);
+  const handleSampleClick = useCallback(
+    (idea: IdeaRequest) => {
+      onSelectSample(idea);
+      onScrollToForm();
+    },
+    [onSelectSample, onScrollToForm]
+  );
 
   return (
-    <div className="relative pt-20 pb-16 px-4">
-      {/* Background decorations */}
+    <section className="relative pt-24 pb-12 px-4 overflow-hidden">
+      {/* Subtle top glow */}
       <div
-        className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] pointer-events-none"
+        aria-hidden="true"
         style={{
-          background: "radial-gradient(ellipse at center, rgba(99,102,241,0.12) 0%, rgba(139,92,246,0.06) 40%, transparent 70%)",
+          position: "absolute",
+          top: 0,
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: 700,
+          height: 300,
+          background:
+            "radial-gradient(ellipse at center top, rgba(99,102,241,0.18) 0%, transparent 65%)",
+          pointerEvents: "none",
         }}
       />
 
-      {/* Badge */}
-      <div className="flex justify-center mb-8 animate-fade-in-up">
-        <div className="badge gap-2 px-4 py-2 text-sm">
-          <Sparkles size={14} className="text-purple-400" />
-          <span>Powered by Google Gemma AI</span>
+      {/* ── Badge ─────────────────────────────────────────────────────── */}
+      <div className="flex justify-center mb-7 animate-fade-in-up">
+        <div
+          className="badge gap-2 px-4 py-2"
+          style={{ fontSize: "0.8rem" }}
+        >
+          <Sparkles size={12} style={{ color: "#a78bfa" }} />
+          Powered by Google Gemma AI
         </div>
       </div>
 
-      {/* Headline */}
-      <div className="text-center max-w-4xl mx-auto animate-fade-in-up animate-delay-100">
-        <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-tight mb-6">
-          <span className="text-white">Turn your idea into a</span>
-          <br />
+      {/* ── Headline ──────────────────────────────────────────────────── */}
+      <div
+        className="text-center animate-fade-in-up animate-delay-100"
+        style={{ maxWidth: 720, margin: "0 auto" }}
+      >
+        <h1
+          style={{
+            fontSize: "clamp(2.4rem, 6vw, 4.5rem)",
+            fontWeight: 800,
+            lineHeight: 1.1,
+            letterSpacing: "-0.03em",
+            marginBottom: "1.25rem",
+          }}
+        >
+          <span style={{ color: "#f1f5f9" }}>Turn your idea into a </span>
           <span className="gradient-text">winning blueprint</span>
         </h1>
-        <p className="text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed mb-10">
-          Hackathon Copilot uses AI to transform your project idea into a complete, 
-          actionable software development plan — with architecture, APIs, database 
-          schemas and a judging pitch.
+        <p
+          style={{
+            fontSize: "1.1rem",
+            color: "#94a3b8",
+            lineHeight: 1.7,
+            maxWidth: 560,
+            margin: "0 auto 2.5rem",
+          }}
+        >
+          Paste your hackathon concept and get a complete software development
+          plan — architecture, APIs, database schemas, roadmap and a judging
+          pitch — in under 30 seconds.
         </p>
 
-        {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
+        {/* ── CTA buttons ────────────────────────────────────────────── */}
+        <div
+          style={{
+            display: "flex",
+            gap: "0.75rem",
+            justifyContent: "center",
+            flexWrap: "wrap",
+            marginBottom: "3.5rem",
+          }}
+        >
           <button
             id="hero-cta-button"
             onClick={onScrollToForm}
-            className="btn-gradient inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-base font-semibold"
+            className="btn-gradient"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              padding: "0.85rem 2rem",
+              borderRadius: "12px",
+              fontSize: "0.95rem",
+            }}
           >
-            <Sparkles size={18} />
+            <Sparkles size={16} />
             Generate My Plan
           </button>
+
           <button
-            onClick={() => handleSampleClick(SAMPLE_IDEAS[0].data)}
-            className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-base font-medium border border-indigo-500/30 text-indigo-300 hover:bg-indigo-500/10 transition-all duration-200"
+            id="demo-mode-button"
+            onClick={onDemoMode}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              padding: "0.85rem 2rem",
+              borderRadius: "12px",
+              fontSize: "0.95rem",
+              fontWeight: 500,
+              border: "1px solid rgba(99,102,241,0.35)",
+              color: "#a5b4fc",
+              background: "rgba(99,102,241,0.08)",
+              cursor: "pointer",
+              transition: "all 0.2s ease",
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.background =
+                "rgba(99,102,241,0.15)";
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.background =
+                "rgba(99,102,241,0.08)";
+            }}
           >
-            <Zap size={18} />
-            Try a Sample Idea
+            <FlaskConical size={16} />
+            Preview Demo
           </button>
         </div>
       </div>
 
-      {/* Feature highlights */}
-      <div className="max-w-3xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-4 mb-16 animate-fade-in-up animate-delay-200">
-        {FEATURE_HIGHLIGHTS.map((f, i) => (
-          <div key={i} className="glass-card p-5 text-center">
-            <div className="inline-flex items-center justify-center w-10 h-10 rounded-lg mb-3"
-              style={{ background: "rgba(99,102,241,0.15)", color: "#a78bfa" }}>
-              {f.icon}
+      {/* ── Pillars ───────────────────────────────────────────────────── */}
+      <div
+        className="animate-fade-in-up animate-delay-200"
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+          gap: "1rem",
+          maxWidth: 720,
+          margin: "0 auto 3rem",
+        }}
+      >
+        {PILLARS.map((p, i) => (
+          <div key={i} className="glass-card" style={{ padding: "1.25rem", textAlign: "center" }}>
+            <div
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: 40,
+                height: 40,
+                borderRadius: 10,
+                background: "rgba(99,102,241,0.18)",
+                color: "#a78bfa",
+                marginBottom: "0.6rem",
+              }}
+            >
+              {p.icon}
             </div>
-            <h3 className="text-sm font-semibold text-white mb-1">{f.title}</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">{f.desc}</p>
+            <p style={{ fontSize: "0.85rem", fontWeight: 600, color: "#f1f5f9", marginBottom: "0.25rem" }}>
+              {p.title}
+            </p>
+            <p style={{ fontSize: "0.75rem", color: "#64748b", lineHeight: 1.5 }}>{p.desc}</p>
           </div>
         ))}
       </div>
 
-      {/* Sample ideas */}
-      <div className="max-w-3xl mx-auto animate-fade-in-up animate-delay-300">
-        <p className="text-center text-sm text-slate-500 mb-4 uppercase tracking-wider font-medium">
-          Quick-start with a sample idea
+      {/* ── Sample ideas ─────────────────────────────────────────────── */}
+      <div
+        className="animate-fade-in-up animate-delay-300"
+        style={{ maxWidth: 720, margin: "0 auto" }}
+      >
+        <p
+          style={{
+            textAlign: "center",
+            fontSize: "0.72rem",
+            letterSpacing: "0.08em",
+            textTransform: "uppercase",
+            color: "#475569",
+            fontWeight: 600,
+            marginBottom: "0.85rem",
+          }}
+        >
+          Or quick-start with a sample idea
         </p>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
+            gap: "0.75rem",
+          }}
+        >
           {SAMPLE_IDEAS.map((s, i) => (
             <button
               key={i}
@@ -164,21 +286,32 @@ export default function LandingHero({ onSelectSample, onScrollToForm }: LandingH
               onClick={() => handleSampleClick(s.data)}
               onMouseEnter={() => setHoveredSample(i)}
               onMouseLeave={() => setHoveredSample(null)}
-              className="glass-card p-4 text-left transition-all duration-200 cursor-pointer"
+              className="glass-card"
               style={{
-                borderColor: hoveredSample === i ? "rgba(139,92,246,0.5)" : undefined,
-                background: hoveredSample === i ? "rgba(99,102,241,0.1)" : undefined,
+                padding: "0.9rem 1rem",
+                textAlign: "left",
+                cursor: "pointer",
+                background:
+                  hoveredSample === i
+                    ? "rgba(99,102,241,0.12)"
+                    : "rgba(13,21,48,0.75)",
+                borderColor:
+                  hoveredSample === i
+                    ? "rgba(139,92,246,0.5)"
+                    : "rgba(99,102,241,0.18)",
+                transition: "all 0.2s ease",
+                border: `1px solid ${hoveredSample === i ? "rgba(139,92,246,0.5)" : "rgba(99,102,241,0.18)"}`,
               }}
             >
-              <div className="flex items-center gap-2 mb-2">
-                <span style={{ color: "#a78bfa" }}>{s.icon}</span>
-                <span className="text-xs text-slate-400">Sample</span>
-              </div>
-              <p className="text-sm font-medium text-white leading-tight">{s.label}</p>
+              <div style={{ fontSize: "1.4rem", marginBottom: "0.4rem" }}>{s.emoji}</div>
+              <p style={{ fontSize: "0.82rem", fontWeight: 600, color: "#e2e8f0" }}>{s.label}</p>
+              <p style={{ fontSize: "0.7rem", color: "#64748b", marginTop: "0.2rem" }}>
+                {s.data.duration} · {s.data.skillLevel}
+              </p>
             </button>
           ))}
         </div>
       </div>
-    </div>
+    </section>
   );
 }

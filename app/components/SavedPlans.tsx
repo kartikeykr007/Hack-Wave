@@ -29,48 +29,96 @@ export default function SavedPlans({ onLoad, refreshTrigger }: SavedPlansProps) 
   };
 
   return (
-    <div className="max-w-2xl mx-auto px-4 mb-8">
+    <div style={{ maxWidth: 640, margin: "0 auto 2rem", padding: "0 1rem" }}>
       <button
         id="saved-plans-toggle"
         onClick={() => setIsOpen((v) => !v)}
-        className="w-full flex items-center justify-between p-4 rounded-xl transition-all duration-200"
         style={{
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "0.85rem 1rem",
+          borderRadius: "12px",
           background: "rgba(255,255,255,0.03)",
-          border: "1px solid rgba(255,255,255,0.06)",
+          border: "1px solid rgba(99,102,241,0.15)",
+          cursor: "pointer",
+          transition: "background 0.15s ease",
+        }}
+        onMouseEnter={(e) => {
+          (e.currentTarget as HTMLButtonElement).style.background = "rgba(99,102,241,0.07)";
+        }}
+        onMouseLeave={(e) => {
+          (e.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,0.03)";
         }}
       >
-        <div className="flex items-center gap-2">
-          <BookOpen size={14} className="text-purple-400" />
-          <span className="text-sm font-medium text-slate-300">Saved Plans</span>
-          <span className="badge text-xs">{plans.length}</span>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+          <BookOpen size={14} style={{ color: "#8b5cf6" }} />
+          <span style={{ fontSize: "0.85rem", fontWeight: 500, color: "#cbd5e1" }}>Saved Plans</span>
+          <span className="badge" style={{ fontSize: "0.68rem" }}>{plans.length}</span>
         </div>
-        {isOpen ? <ChevronUp size={14} className="text-slate-400" /> : <ChevronDown size={14} className="text-slate-400" />}
+        {isOpen
+          ? <ChevronUp size={14} style={{ color: "#64748b" }} />
+          : <ChevronDown size={14} style={{ color: "#64748b" }} />}
       </button>
 
       {isOpen && (
-        <div className="mt-2 space-y-2 animate-fade-in-up">
+        <div className="animate-fade-in-up" style={{ marginTop: "0.5rem", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
           {plans.map((p) => (
             <div
               key={p.id}
-              className="glass-card p-4 cursor-pointer flex items-start justify-between gap-3"
+              className="glass-card"
               onClick={() => onLoad(p)}
+              style={{
+                padding: "0.85rem 1rem",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "flex-start",
+                justifyContent: "space-between",
+                gap: "0.75rem",
+              }}
             >
-              <div className="min-w-0">
-                <p className="text-sm font-semibold text-white truncate">{p.projectName}</p>
-                <div className="flex items-center gap-2 mt-1">
-                  <Clock size={10} className="text-slate-500" />
-                  <p className="text-xs text-slate-500">
+              <div style={{ minWidth: 0 }}>
+                <p style={{ fontSize: "0.875rem", fontWeight: 600, color: "#f1f5f9", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  {p.projectName}
+                </p>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginTop: "0.3rem" }}>
+                  <Clock size={10} style={{ color: "#475569" }} />
+                  <span style={{ fontSize: "0.72rem", color: "#475569" }}>
                     {new Date(p.generatedAt).toLocaleDateString()}
-                  </p>
-                  <span className="badge text-xs">{p.request?.duration || ""}</span>
+                  </span>
+                  {p.request?.duration && (
+                    <span className="badge" style={{ fontSize: "0.65rem", padding: "1px 7px" }}>
+                      {p.request.duration}
+                    </span>
+                  )}
                 </div>
               </div>
               <button
                 onClick={(e) => handleDelete(p.id, e)}
-                className="flex-shrink-0 p-1.5 rounded-lg text-slate-500 hover:text-red-400 hover:bg-red-400/10 transition-all duration-200"
-                title="Delete plan"
+                aria-label={`Delete ${p.projectName}`}
+                style={{
+                  flexShrink: 0,
+                  padding: "0.3rem",
+                  borderRadius: "6px",
+                  background: "none",
+                  border: "none",
+                  color: "#475569",
+                  cursor: "pointer",
+                  transition: "color 0.15s, background 0.15s",
+                }}
+                onMouseEnter={(e) => {
+                  const el = e.currentTarget as HTMLButtonElement;
+                  el.style.color = "#f87171";
+                  el.style.background = "rgba(239,68,68,0.1)";
+                }}
+                onMouseLeave={(e) => {
+                  const el = e.currentTarget as HTMLButtonElement;
+                  el.style.color = "#475569";
+                  el.style.background = "none";
+                }}
               >
-                <Trash2 size={12} />
+                <Trash2 size={13} />
               </button>
             </div>
           ))}
