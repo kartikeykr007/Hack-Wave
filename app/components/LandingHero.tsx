@@ -3,6 +3,7 @@
 import { useState, useCallback } from "react";
 import { Clock, Cpu, Layers, Sparkles, FlaskConical } from "lucide-react";
 import { IdeaRequest } from "@/lib/types";
+import FluxLines from "@/components/FluxLines";
 
 // ─── Sample ideas ─────────────────────────────────────────────────────────────
 const SAMPLE_IDEAS: { label: string; emoji: string; data: IdeaRequest }[] = [
@@ -101,6 +102,34 @@ export default function LandingHero({
 
   return (
     <section className="relative pt-24 pb-12 px-4 overflow-hidden">
+      {/* Background FluxLines dynamic fluid effect */}
+      <div
+        className="absolute inset-0 pointer-events-none overflow-hidden"
+        style={{
+          zIndex: 0,
+          opacity: 0.85,
+          maskImage:
+            "radial-gradient(ellipse 100% 85% at 50% 25%, black 60%, transparent 100%)",
+          WebkitMaskImage:
+            "radial-gradient(ellipse 100% 85% at 50% 25%, black 60%, transparent 100%)",
+        }}
+        aria-hidden="true"
+      >
+        <FluxLines
+          colors={["#818cf8", "#c084fc", "#38bdf8", "#ffffff"]}
+          glow={2.5}
+          rimWidth={0.22}
+          lineWidth={1.2}
+          speed={0.45}
+          scale={1.5}
+          turbulence={0.85}
+          flowDirection="down"
+          mouseInteraction
+          clickSwirl
+          transparent
+        />
+      </div>
+
       {/* Subtle top glow */}
       <div
         aria-hidden="true"
@@ -118,7 +147,7 @@ export default function LandingHero({
       />
 
       {/* ── Badge ─────────────────────────────────────────────────────── */}
-      <div className="flex justify-center mb-7 animate-fade-in-up">
+      <div className="relative z-10 flex justify-center mb-7 animate-fade-in-up">
         <div
           className="badge gap-2 px-4 py-2"
           style={{ fontSize: "0.8rem" }}
@@ -130,7 +159,7 @@ export default function LandingHero({
 
       {/* ── Headline ──────────────────────────────────────────────────── */}
       <div
-        className="text-center animate-fade-in-up animate-delay-100"
+        className="relative z-10 text-center animate-fade-in-up animate-delay-100"
         style={{ maxWidth: 720, margin: "0 auto" }}
       >
         <h1
@@ -220,7 +249,7 @@ export default function LandingHero({
 
       {/* ── Pillars ───────────────────────────────────────────────────── */}
       <div
-        className="animate-fade-in-up animate-delay-200"
+        className="relative z-10 animate-fade-in-up animate-delay-200"
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
@@ -256,7 +285,7 @@ export default function LandingHero({
 
       {/* ── Sample ideas ─────────────────────────────────────────────── */}
       <div
-        className="animate-fade-in-up animate-delay-300"
+        className="relative z-10 animate-fade-in-up animate-delay-300"
         style={{ maxWidth: 720, margin: "0 auto" }}
       >
         <p
